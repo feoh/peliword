@@ -2,6 +2,7 @@ import markdown
 import pelican
 import requests
 import pprint
+import wp_client_secret
 
 settings = pelican.settings.read_settings()
 mdr = pelican.readers.MarkdownReader(settings)
