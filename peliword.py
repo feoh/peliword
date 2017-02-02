@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import glob
 import os
 import markdown
@@ -16,5 +17,9 @@ glob_path = pelican_blog_dir + "/content/*.md"
 for post in glob.glob(glob_path):
     mda = mdr.read(post)
     headers = mda[1]
+    pprint.pprint(headers)    
     print("title: {}".format(headers['title']))
+    slug=headers['slug']
+    print("slug: {}".format(slug))
+
 
