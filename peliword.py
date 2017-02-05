@@ -6,6 +6,8 @@ import pelican
 import requests
 import pprint
 import json
+import html
+
 from peliword_config import pelican_blog_dir, wp_client_secret
 
 wp_api_base = 'https://public-api.wordpress.com/rest/v1.1/sites/feohorg.wordpress.com'
@@ -19,11 +21,10 @@ wp_resp = json.loads(wp_posts_json)
 
 wp_posts = wp_resp['posts']
 
-wp_titles = [ wp_post['title'] for wp_post in wp_posts ]
+wp_titles = [ html.unescape(wp_post['title']) for wp_post in wp_posts ]
 
 print(wp_titles)
 # pprint.pprint(wp_posts)
-
 
 
 if not os.path.exists(pelican_blog_dir):
@@ -34,5 +35,5 @@ for post in glob.glob(glob_path):
     mda = mdr.read(post)
     headers = mda[1]
     title = headers['title']
-    print("title: ",title)
-
+    if title not in wp_titles:
+        print("title: {}".format(title))
