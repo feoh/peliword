@@ -44,7 +44,6 @@ glob_path = pelican_blog_dir + "/content/*.md"
 for post in glob.glob(glob_path):
     mda = mdr.read(post)
     pelican_headers = mda[1]
-    pprint.pprint(pelican_headers)
     # Pelican tags are actually objects. Process them down to a comma separated string of tags
     pelican_tag_objs = pelican_headers['tags']
     pelican_tag_list = [ tag.name for tag in pelican_tag_objs ]
@@ -62,22 +61,13 @@ for post in glob.glob(glob_path):
         print("Posting title: {}".format(pelican_headers['title']))
         print("wp_client_secret={}".format(wp_client_secret))
         bearer = "Bearer {}".format(wp_client_secret)
-        pprint.pprint(bearer)
         headers = {}
         headers['authorization'] = bearer
 
         print("headers:")
         pprint.pprint(headers)
 
-        test_post = "Date: {}\nTitle: {}\nAuthor: {}\ntags: {}\ncategory: {}\n".format(wp_post_headers['date'],
-                                                                                       wp_post_headers['title'],
-                                                                                       wp_post_headers['author'],
-                                                                                       wp_post_headers['tags'],
-                                                                                       wp_post_headers['category'])
-        print(test_post)
-
-        
-        wp_post_response = requests.post(wp_api_base + "/posts/new", headers = headers, data = pelican_headers)
+        wp_post_response = requests.post(wp_api_base + "/posts/new", headers = headers, data = wp_post_headers)
         pprint.pprint(wp_post_response)
         break;
 
