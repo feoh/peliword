@@ -1,0 +1,5 @@
+pelican_blog_dir = '/home/feoh/src/personal/blindnotdumb'
+wp_client_id = '99999'
+wp_client_secret = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+wp_username = 'frodo@baggins.org'
+wp_password = 'G0l3m5m3ll5'

@@ -11,13 +11,12 @@ import html
 import logging
 from pelican.utils import SafeDatetime
 from peliword_config import pelican_blog_dir, wp_client_secret, wp_username, wp_password, wp_client_id
-try:
-    import http.client as http_client
-except ImportError:
-    # Python 2
-    import httplib as http_client
-http_client.HTTPConnection.debuglevel = 1
-
+# try:
+#     import http.client as http_client
+# except ImportError:
+#     # Python 2
+#     import httplib as http_client
+# http_client.HTTPConnection.debuglevel = 1
 
 def get_wpcom_access_key():
     headers = {}
@@ -31,16 +30,16 @@ def get_wpcom_access_key():
 
 
 # You must initialize logging, otherwise you'll not see debug output.
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+# logging.basicConfig()
+# logging.getLogger().setLevel(logging.DEBUG)
+# requests_log = logging.getLogger("requests.packages.urllib3")
+# requests_log.setLevel(logging.DEBUG)
+# requests_log.propagate = True
 
 wp_api_base = 'https://public-api.wordpress.com/rest/v1.1/sites/feohorg.wordpress.com'
 
-get_wpcom_access_key()
-sys.exit()
+#get_wpcom_access_key()
+#sys.exit()
 
 settings = pelican.settings.read_settings()
 mdr = pelican.readers.MarkdownReader(settings)
@@ -81,11 +80,8 @@ for post in glob.glob(glob_path):
         print("Posting title: {}".format(pelican_headers['title']))
         print("wp_client_secret={}".format(wp_client_secret))
 
-        print("headers:")
-        pprint.pprint(headers)
+#        wp_post_response = requests.post(wp_api_base + "/posts/new", headers = headers, data = wp_post_headers)
+#        pprint.pprint(wp_post_response)
 
-        wp_post_response = requests.post(wp_api_base + "/posts/new", headers = headers, data = wp_post_headers)
-        pprint.pprint(wp_post_response)
-        break;
 
 
