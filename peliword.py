@@ -10,7 +10,7 @@ import json
 import html
 import logging
 from pelican.utils import SafeDatetime
-from peliword_config import pelican_blog_dir, wp_client_secret, wp_username, wp_password, wp_client_id
+from peliword_config import pelican_blog_dir, wp_post_author, wp_username, wp_password, wp_client_id, wp_client_secret
 # try:
 #     import http.client as http_client
 # except ImportError:
@@ -19,14 +19,21 @@ from peliword_config import pelican_blog_dir, wp_client_secret, wp_username, wp_
 # http_client.HTTPConnection.debuglevel = 1
 
 def get_wpcom_access_key():
-    headers = {}
-    headers['username'] = wp_username
-    headers['password'] = wp_password
-    headers['client_id'] = wp_client_id
-    headers['client_secret'] = wp_client_secret
-    headers['grant_type'] = 'password'
-    wpcom_access_key_json = requests.post('https://public-api.wordpress.com/oauth2/token', headers=headers)
+    data = {}
+    data['username'] = wp_username
+    data['password'] = wp_password
+    data['client_id'] = wp_client_id
+    data['client_secret'] = wp_client_secret
+    data['grant_type'] = 'password'
+    wpcom_access_key_json = requests.post('https://public-api.wordpress.com/oauth2/token', data = data)
     pprint.pprint(wpcom_access_key_json)
+    print(wpcom_access_key_json.content)
+    wpcom_access_key_string = wpcom_access_key_json.content.decode("utf-8")
+    wpcom_access_key_blob = json.loads(wpcom_access_key_string)
+    wp_access_token = wpcom_access_key_blob['access_token']
+    print("wp_access_token: {}".format(wp_access_token))
+    return wp_access_token
+
 
 
 # You must initialize logging, otherwise you'll not see debug output.
@@ -38,8 +45,7 @@ def get_wpcom_access_key():
 
 wp_api_base = 'https://public-api.wordpress.com/rest/v1.1/sites/feohorg.wordpress.com'
 
-#get_wpcom_access_key()
-#sys.exit()
+wp_access_token = get_wpcom_access_key()
 
 settings = pelican.settings.read_settings()
 mdr = pelican.readers.MarkdownReader(settings)
@@ -68,9 +74,7 @@ for post in glob.glob(glob_path):
     wp_post_headers = pelican_headers
     wp_post_headers['tags'] = pelican_tags
 
-    # Do the same for author.
-    author = wp_post_headers['author'].name
-    wp_post_headers['author'] = author
+    wp_post_headers['author'] = wp_post_author
 
     
     pelican_body = mda[0]
@@ -78,10 +82,12 @@ for post in glob.glob(glob_path):
 
     if pelican_headers.get('slug','') not in wp_slugs:
         print("Posting title: {}".format(pelican_headers['title']))
-        print("wp_client_secret={}".format(wp_client_secret))
 
-#        wp_post_response = requests.post(wp_api_base + "/posts/new", headers = headers, data = wp_post_headers)
-#        pprint.pprint(wp_post_response)
+        wp_post_response = requests.post(wp_api_base + "/posts/new",
+                                         headers = {'authorization': wp_access_token},
+                                         data = wp_post_headers)
+        print(wp_post_response)
+        pprint.pprint(wp_post_response.content)
 
 
 
